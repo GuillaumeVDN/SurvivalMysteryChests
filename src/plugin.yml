@@ -1,0 +1,15 @@
+name: SurvivalMysteryChests
+version: 1.5.0
+main: be.pyrrh4.smc.SMC
+depend: [PyrCore,Vault]
+author: PYRRH4
+website: https://www.spigotmc.org/resources/authors/pyrrh4.70459/
+commands:
+  survivalmysterychests:
+    description: Main command !
+    aliases: [smc]
+permissions:
+  smc.chest.create:
+    default: op
+  smc.key.give:
+    default: op
