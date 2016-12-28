@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 
-import be.pyrrh4.core.lib.messenger.Replacer;
+import be.pyrrh4.core.messenger.Replacer;
 import be.pyrrh4.smc.SMC;
 
 public class CooldownManager

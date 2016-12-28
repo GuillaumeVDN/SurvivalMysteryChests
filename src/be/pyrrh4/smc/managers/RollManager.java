@@ -16,7 +16,7 @@ public class RollManager
 		final Inventory inv = inventoryData.getInventory();
 		final Player player = inventoryData.getPlayer();
 		final String id = inventoryData.getId();
-		final Inventory inventory = Bukkit.createInventory(player, inv.getSize(), SMC.i.getMessage("inventory-rolling").getLines(player, null).get(0));
+		final Inventory inventory = Bukkit.createInventory(player, inv.getSize(), SMC.i.getMessage("inventory-rolling").getLines(null).get(0));
 
 		// On actualise l'inventaire
 
@@ -124,7 +124,7 @@ public class RollManager
 	{
 		Player player = inventoryData.getPlayer();
 		Inventory inv = inventoryData.getInventory();
-		Inventory inventory = Bukkit.createInventory(player, inv.getSize(), SMC.i.getMessage("inventory-finished").getLines(player, null).get(0));
+		Inventory inventory = Bukkit.createInventory(player, inv.getSize(), SMC.i.getMessage("inventory-finished").getLines(null).get(0));
 
 		// On actualise l'inventaire
 

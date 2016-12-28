@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -44,7 +45,7 @@ public class InventoryManager
 	@SuppressWarnings("deprecation")
 	public void loadItems()
 	{
-		Bukkit.getLogger().info("Loading items...");
+		SMC.i.log(Level.INFO, "Loading items...");
 		ConfigurationSection cs = SMC.i.config.getLast().getConfigurationSection("");
 
 		if (cs == null) {
@@ -118,7 +119,7 @@ public class InventoryManager
 			this.items.put(chestId, items);
 		}
 
-		Bukkit.getLogger().info("Items loaded.");
+		SMC.i.log(Level.INFO, "Items loaded.");
 	}
 
 	// Mise à jour de l'inventaire avec un nouveau choix

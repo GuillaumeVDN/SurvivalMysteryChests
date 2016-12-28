@@ -2,22 +2,24 @@ package be.pyrrh4.smc;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import be.pyrrh4.core.AbstractPlugin;
 import be.pyrrh4.core.Core;
-import be.pyrrh4.core.PyrPlugin;
-import be.pyrrh4.core.lib.command.CommandArgumentsPattern;
-import be.pyrrh4.core.lib.command.CommandCallInfo;
-import be.pyrrh4.core.lib.command.CommandHandler;
-import be.pyrrh4.core.lib.command.CommandSubHandler;
-import be.pyrrh4.core.lib.messenger.Replacer;
-import be.pyrrh4.core.lib.storage.ConfigFile;
+import be.pyrrh4.core.Setting;
+import be.pyrrh4.core.command.CommandArgumentsPattern;
+import be.pyrrh4.core.command.CommandCallInfo;
+import be.pyrrh4.core.command.CommandHandler;
+import be.pyrrh4.core.command.CommandSubHandler;
+import be.pyrrh4.core.messenger.Replacer;
+import be.pyrrh4.core.storage.Config;
+import be.pyrrh4.core.storage.ConfigFile;
 import be.pyrrh4.core.util.UString;
 import be.pyrrh4.core.util.collection.ItemBuilder;
 import be.pyrrh4.smc.listeners.BlockBreak;
@@ -30,7 +32,7 @@ import be.pyrrh4.smc.managers.InventoryManager;
 import be.pyrrh4.smc.managers.RollManager;
 import net.milkbowl.vault.economy.Economy;
 
-public class SMC extends PyrPlugin
+public class SMC extends AbstractPlugin
 {
 	public static SMC i;
 	public static Economy vault;
@@ -47,10 +49,20 @@ public class SMC extends PyrPlugin
 	private CommandHandler handler;
 	public ConfigFile database;
 
-	public SMC()
+	// Initialize
+
+	@Override
+	public void initialize()
 	{
-		super(true, "config.yml", "msg", null, null, "https://www.spigotmc.org/resources/15755/", false);
+		setSetting(Setting.PLUGIN_SHORT_NAME, "SMC");
+		setSetting(Setting.AUTO_UPDATE_URL, "https://www.spigotmc.org/resources/15755/");
+		setSetting(Setting.ALLOW_PUBLIC_MYSQL, true);
+		setSetting(Setting.HAS_STORAGE, true);
+		setSetting(Setting.CONFIG_FILE_NAME, "config.yml");
+		setSetting(Setting.CONFIG_PATH_MESSAGES, "msg");
 	}
+
+	// On enable
 
 	@Override
 	public void enable()
@@ -75,8 +87,8 @@ public class SMC extends PyrPlugin
 
 		if (oldFile.exists() && !database.getOrDefault("converted", false))
 		{
-			Bukkit.getLogger().info("[SMC] Starting converting old data from /SurvivalMysteryChests/database.yml to /pyrrh4_plugins/SurvivalMysteryChests/chests.data ...");
-			YamlConfiguration old = YamlConfiguration.loadConfiguration(oldFile);
+			log(Level.INFO, "Starting converting old data from /SurvivalMysteryChests/database.yml to /pyrrh4_plugins/SurvivalMysteryChests/chests.data ...");
+			Config old = Config.loadConfiguration(this, oldFile);
 			int loaded = 0;
 			int skipped = 0;
 
@@ -91,25 +103,25 @@ public class SMC extends PyrPlugin
 
 						if (loc == null || id == null)
 						{
-							Bukkit.getLogger().warning("[SMC] Could not load chest '" + uuid + "' from the old database file.");
+							log(Level.WARNING, "Could not load chest '" + uuid + "' from the old database file.");
 							continue;
 						}
 
 						database.set(uuid + ".location", loc);
 						database.set(uuid + ".id", id);
 						loaded++;
-						Bukkit.getLogger().info("[SMC] Successfully loaded chest '" + uuid + "' from the old database file.");
+						log(Level.INFO, "Successfully loaded chest '" + uuid + "' from the old database file.");
 					}
 					catch (Exception exception)
 					{
 						skipped++;
-						Bukkit.getLogger().warning("[SMC] Could not load chest '" + uuid + "' scrollboard from the old database file.");
+						log(Level.WARNING, "Could not load chest '" + uuid + "' scrollboard from the old database file.");
 					}
 				}
 			}
 
 			database.set("converted", true);
-			Bukkit.getLogger().info("[SMC] Successfully converted all chests from the old database file. " + loaded + " chest" + (loaded > 1 ? "s" : "") + " were loaded and " + skipped + " chest" + (skipped > 1 ? "s" : "") + " were skipped.");
+			log(Level.INFO, "Successfully converted all chests from the old database file. " + loaded + " chest" + (loaded > 1 ? "s" : "") + " were loaded and " + skipped + " chest" + (skipped > 1 ? "s" : "") + " were skipped.");
 		}
 
 		// Commands

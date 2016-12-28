@@ -216,31 +216,22 @@ chests:
 
 # ------------------------------------------------------------ #
 # Messages
-# Note : only languages "ENG" and "FRA" are registered by
-#  default with PyrCore. If there are anothers languages,
-#  you'll have to register them with PyrCore in this file :
-#  [server directory]/plugins/pyrrh4_plugins/config.yml
+# Default language is english ; alternative languages are
+#  commented below.
 # ------------------------------------------------------------ #
 
 msg:
-  permission-error:
-    ENG: '&4MysteryChests >> &cYou don''t have the permission to do that !'
-    FRA: '&4MysteryChests >> &cTu n''as la permission de faire cela !'
-  chest-pay:
-    ENG: '&2MysteryChests >> &aYou used {object} &ato open {name} &a!'
-    FRA: '&2MysteryChests >> &aTu as utilisé {object} &apour ouvrir {name} &a!'
-  chest-price:
-    ENG: '&4MysteryChests >> &cYou need {object} &ato open this chest !'
-    FRA: '&4MysteryChests >> &cTu as besoin de {object} &apour ouvrir ce coffre !'
-  chest-delay:
-    ENG: '&4MysteryChests >> &cYou have to wait {time} seconds to open this chest again !'
-    FRA: '&4MysteryChests >> &cTu dois attendre {time} secondes pour ouvrir à nouveau ce coffre !'
-  key-receive:
-    ENG: '&2MysteryChests >> &aYou received a key : {name} &a!'
-    FRA: '&2MysteryChests >> &aTu as reçu une clé : {name} &a!'
-  inventory-rolling:
-    ENG: 'Rolling...'
-    FRA: 'Défilement...'
-  inventory-finished:
-    ENG: 'You won !'
-    FRA: 'Tu as gagné !'
+  permission-error: '&4MysteryChests >> &cYou don''t have the permission to do that !'
+#	FRA: '&4MysteryChests >> &cTu n''as la permission de faire cela !'
+  chest-pay: '&2MysteryChests >> &aYou used {object} &ato open {name} &a!'
+#	FRA: '&2MysteryChests >> &aTu as utilisé {object} &apour ouvrir {name} &a!'
+  chest-price: '&4MysteryChests >> &cYou need {object} &ato open this chest !'
+#	FRA: '&4MysteryChests >> &cTu as besoin de {object} &apour ouvrir ce coffre !'
+  chest-delay: '&4MysteryChests >> &cYou have to wait {time} seconds to open this chest again !'
+#	FRA: '&4MysteryChests >> &cTu dois attendre {time} secondes pour ouvrir à nouveau ce coffre !'
+  key-receive: '&2MysteryChests >> &aYou received a key : {name} &a!'
+#	FRA: '&2MysteryChests >> &aTu as reçu une clé : {name} &a!'
+  inventory-rolling: 'Rolling...'
+#	FRA: 'Défilement...'
+  inventory-finished: 'You won !'
+#	FRA: 'Tu as gagné !'

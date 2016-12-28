@@ -13,7 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import be.pyrrh4.core.Core;
-import be.pyrrh4.core.lib.messenger.Replacer;
+import be.pyrrh4.core.messenger.Replacer;
 import be.pyrrh4.core.util.UString;
 import be.pyrrh4.smc.SMC;
 import be.pyrrh4.smc.misc.InventoryData;
