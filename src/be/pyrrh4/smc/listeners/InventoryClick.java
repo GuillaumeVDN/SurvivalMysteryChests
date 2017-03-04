@@ -61,9 +61,9 @@ public class InventoryClick implements Listener
 						// On joue un son
 
 						player.playSound(player.getLocation(),
-								Sound.valueOf(SMC.i.config.getLast().getString("sounds.reward.sound")),
-								Float.valueOf(SMC.i.config.getLast().getString("sounds.reward.volume")),
-								Float.valueOf(SMC.i.config.getLast().getString("sounds.reward.pitch")));
+								Sound.valueOf(SMC.i.config.getString("sounds.reward.sound")),
+								Float.valueOf(SMC.i.config.getString("sounds.reward.volume")),
+								Float.valueOf(SMC.i.config.getString("sounds.reward.pitch")));
 
 						// On supprime le slot
 
@@ -89,13 +89,13 @@ public class InventoryClick implements Listener
 					// On joue un son
 
 					player.playSound(player.getLocation(),
-							Sound.valueOf(SMC.i.config.getLast().getString("sounds.select.sound")),
-							Float.valueOf(SMC.i.config.getLast().getString("sounds.select.volume")),
-							Float.valueOf(SMC.i.config.getLast().getString("sounds.select.pitch")));
+							Sound.valueOf(SMC.i.config.getString("sounds.select.sound")),
+							Float.valueOf(SMC.i.config.getString("sounds.select.volume")),
+							Float.valueOf(SMC.i.config.getString("sounds.select.pitch")));
 
 					// On vérifie s'il ne faut pas lancer la roulette
 
-					if (inventoryData.getChoices().size() >= SMC.i.config.getLast().getInt(inventoryData.getId() + ".settings.choice")){
+					if (inventoryData.getChoices().size() >= SMC.i.config.getInt(inventoryData.getId() + ".settings.choice")){
 						SMC.i.rollManager.launchRoll(inventoryData);
 					}
 				}

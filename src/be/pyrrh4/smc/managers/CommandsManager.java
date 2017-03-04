@@ -2,15 +2,13 @@ package be.pyrrh4.smc.managers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import be.pyrrh4.core.storage.PMLReader;
 import be.pyrrh4.core.util.UString;
 import be.pyrrh4.smc.SMC;
 
@@ -28,22 +26,18 @@ public class CommandsManager
 
 	public List<String> getCommands(ItemStack item, String chestId)
 	{
-		ConfigurationSection ConfigurationSection = SMC.i.config.getLast().getConfigurationSection("chests." + chestId + ".wins");
+		PMLReader reader = SMC.i.config;
 		List<String> commands = new ArrayList<String>();
 
 		// On parcourt la liste des actions
 
-		for (Entry<String, Object> entry : ConfigurationSection.getValues(false).entrySet())
+		for (String key : reader.getKeysForSection("chests." + chestId + ".wins", false))
 		{
-			if (!(entry.getValue() instanceof MemorySection))
-				continue;
-
-			MemorySection memorySection = (MemorySection) entry.getValue();
-			String brut = memorySection.getString("item");
+			String brut = reader.getString("chests." + chestId + ".wins." + key + ".item");
 
 			Material type = Material.getMaterial(brut.split(" ")[0]);
-			String name = memorySection.getString("name");
-			List<String> lore = memorySection.getStringList("name");
+			String name = reader.getString("chests." + chestId + ".wins." + key + ".name");
+			List<String> lore = reader.getListOfString("chests." + chestId + ".wins." + key + ".lore");
 
 			if (name != null)
 				name = UString.format(name);
@@ -55,8 +49,9 @@ public class CommandsManager
 					&& (item.getItemMeta().hasDisplayName() && name != null  ? item.getItemMeta().getDisplayName().equals(name) : true)
 					&& (item.getItemMeta().hasLore() && lore != null ? item.getItemMeta().getLore().equals(lore) : true))
 			{
-				if (memorySection.contains("commands"));
-				commands = memorySection.getStringList("commands");
+				if (reader.contains(reader.getString("chests." + chestId + ".wins." + key + ".commands"))) {
+					commands = reader.getListOfString("chests." + chestId + ".wins." + key + ".commands");
+				}
 			}
 		}
 

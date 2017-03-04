@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -18,8 +17,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import be.pyrrh4.core.storage.PMLReader;
+import be.pyrrh4.core.util.ItemBuilder;
 import be.pyrrh4.core.util.UString;
-import be.pyrrh4.core.util.collection.ItemBuilder;
 import be.pyrrh4.smc.SMC;
 import be.pyrrh4.smc.misc.InventoryData;
 
@@ -36,8 +36,8 @@ public class InventoryManager
 		random = new Random();
 		items = new HashMap<String, HashMap<String, ItemStack>>();
 		inventories = new ArrayList<InventoryData>();
-		selectedItem = ItemBuilder.fromConfig(SMC.i.config.getLast(), "items.selected").build();
-		notSelectedItem = ItemBuilder.fromConfig(SMC.i.config.getLast(), "items.not-selected").build();
+		selectedItem = ItemBuilder.fromPMLReader(SMC.i.config, "items.selected").build();
+		notSelectedItem = ItemBuilder.fromPMLReader(SMC.i.config, "items.not-selected").build();
 
 		loadItems();
 	}
@@ -46,26 +46,18 @@ public class InventoryManager
 	public void loadItems()
 	{
 		SMC.i.log(Level.INFO, "Loading items...");
-		ConfigurationSection cs = SMC.i.config.getLast().getConfigurationSection("");
+		PMLReader reader = SMC.i.config;
 
-		if (cs == null) {
-			return;
-		}
-
-		for (Entry<String, Object> e : cs.getValues(false).entrySet())
+		for (Entry<String, Object> e : reader.getValuesForSection("").entrySet())
 		{
 			String chestId = e.getKey();
-			ConfigurationSection configurationSection = SMC.i.config.getLast().getConfigurationSection("chests." + chestId + ".wins");
 			HashMap<String, ItemStack> items = new HashMap<String, ItemStack>();
-
-			if (configurationSection == null)
-				return;
 
 			for (int i = 0; i < 50; i++)
 			{
 				// On parcourt la liste des récompenses
 
-				for (Entry<String, Object> entry : configurationSection.getValues(false).entrySet())
+				for (Entry<String, Object> entry : reader.getValuesForSection("chests." + chestId + ".wins").entrySet())
 				{
 					String id = entry.getKey();
 					MemorySection memorySection = (MemorySection) entry.getValue();
@@ -76,8 +68,8 @@ public class InventoryManager
 						String brut = memorySection.getString("item");
 						Material type = Material.getMaterial(brut.split(" ")[0]);
 						int data = Integer.parseInt(brut.split(" ")[1]);
-						String name = SMC.i.config.getLast().getString(memorySection.getCurrentPath() + ".name");
-						List<String> lore = SMC.i.config.getLast().getStringList(memorySection.getCurrentPath() + ".lore");
+						String name = reader.getString(memorySection.getCurrentPath() + ".name");
+						List<String> lore = reader.getListOfString(memorySection.getCurrentPath() + ".lore");
 						ItemStack item;
 
 						if (name != null)
@@ -141,8 +133,8 @@ public class InventoryManager
 
 	public Inventory getEmptyChoiceInventory(String id, Player player)
 	{
-		String name = UString.format(SMC.i.config.getLast().getString("chests." + id + ".settings.name"));
-		int size = SMC.i.config.getLast().getInt("chests." + id + ".settings.size");
+		String name = UString.format(SMC.i.config.getString("chests." + id + ".settings.name"));
+		int size = SMC.i.config.getInt("chests." + id + ".settings.size");
 		Inventory inventory = Bukkit.createInventory(player, size, name);
 
 		// On ajoute les items
@@ -191,7 +183,7 @@ public class InventoryManager
 			i++;
 		}
 
-		String brutAmount = SMC.i.config.getLast().getString("chests." + chestId + ".wins." + rewardId + ".item").split(" ")[2];
+		String brutAmount = SMC.i.config.getString("chests." + chestId + ".wins." + rewardId + ".item").split(" ")[2];
 		int amount = 0;
 
 		if (brutAmount.contains("random"))

@@ -19,7 +19,7 @@ public class CooldownManager
 			{
 				long now = System.currentTimeMillis();
 				long time = times.get(chest);
-				int delay = SMC.i.config.getLast().getInt("chests." + chest + ".settings.delay");
+				int delay = SMC.i.config.getInt("chests." + chest + ".settings.delay");
 
 				if ((now - time) >= 1000L * delay)
 				{
@@ -29,7 +29,7 @@ public class CooldownManager
 				}
 				else
 				{
-					SMC.i.getMessage("chest-delay").send(new Replacer("{time}", delay - ((now - time) / 1000L)), player);
+					SMC.i.config.getMessage("chest-delay").send(new Replacer("{time}", delay - ((now - time) / 1000L)), player);
 					return false;
 				}
 			}

@@ -24,7 +24,7 @@ public class BlockBreak implements Listener
 		{
 			SMC.i.database.set(path + ".location", null);
 			SMC.i.database.set(path + ".id", null);
-			SMC.i.database.set(path, null);
+			SMC.i.database.set(path, null).save();
 			Core.getMessenger().normal(player, "MysteryChests >>", "The chest has been removed !");
 		}
 	}

@@ -1,12 +1,10 @@
 package be.pyrrh4.smc.managers;
 
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.MemorySection;
 
+import be.pyrrh4.core.storage.PMLReader;
 import be.pyrrh4.core.util.ULocation;
 import be.pyrrh4.smc.SMC;
 
@@ -17,25 +15,22 @@ public class ChestManager
 		// On enregistre le coffre dans la database
 
 		String uuid = UUID.randomUUID().toString();
-		SMC.i.database.set(uuid + ".location", ULocation.serializeLocation(location));
-		SMC.i.database.set(uuid + ".id", id);
+
+		SMC.i.database
+		.set(uuid + ".location", ULocation.serializeLocation(location))
+		.set(uuid + ".id", id)
+		.save();
 	}
 
 	public String getChestId(Location location)
 	{
-		ConfigurationSection configurationSection = SMC.i.database.getLast().getConfigurationSection("");
+		PMLReader reader = SMC.i.database.reader();
 
-		if (configurationSection == null)
-			return null;
-
-		for (Entry<String, Object> entry : configurationSection.getValues(false).entrySet())
+		for (String key : reader.getKeysForSection("", false))
 		{
-			MemorySection memorySection = (MemorySection) entry.getValue();
-			Location loc = ULocation.unserializeLocation(memorySection.getString("location"));
-			String id = memorySection.getString("id");
-
-			if (location.equals(loc))
-				return id;
+			if (location.equals(ULocation.unserializeLocation(reader.getString(key + ".location")))) {
+				return reader.getString(key + ".id");
+			}
 		}
 
 		return null;
@@ -43,18 +38,13 @@ public class ChestManager
 
 	public String getChestPath(Location location)
 	{
-		ConfigurationSection configurationSection = SMC.i.database.getLast().getConfigurationSection("");
+		PMLReader reader = SMC.i.database.reader();
 
-		if (configurationSection == null)
-			return null;
-
-		for (Entry<String, Object> entry : configurationSection.getValues(false).entrySet())
+		for (String key : reader.getKeysForSection("", false))
 		{
-			MemorySection memorySection = (MemorySection) entry.getValue();
-			Location loc = ULocation.unserializeLocation(memorySection.getString("location"));
-
-			if (location.equals(loc))
-				return entry.getKey();
+			if (location.equals(ULocation.unserializeLocation(reader.getString(key + ".location")))) {
+				return key;
+			}
 		}
 
 		return null;

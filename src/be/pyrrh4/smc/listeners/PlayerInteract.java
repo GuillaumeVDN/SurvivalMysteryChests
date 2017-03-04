@@ -68,7 +68,7 @@ public class PlayerInteract implements Listener
 
 						// On vérifie la condition
 
-						String price = UString.format("chests." + SMC.i.config.getLast().getString(chestId + ".settings.price"));
+						String price = UString.format("chests." + SMC.i.config.getString(chestId + ".settings.price"));
 
 						if (price.contains("money "))
 						{
@@ -77,20 +77,20 @@ public class PlayerInteract implements Listener
 
 							if (amount > bank)
 							{
-								SMC.i.getMessage("chest-price").send(new Replacer("{object}", SMC.vault.format(amount)), player);
+								SMC.i.config.getMessage("chest-price").send(new Replacer("{object}", SMC.vault.format(amount)), player);
 								return;
 							}
 							else
 							{
-								SMC.i.getMessage("chest-pay").send(new Replacer("{object}", SMC.vault.format(amount), "{name}", UString.format(SMC.i.config.getLast().getString("chests." + chestId + ".settings.name"))), player);
+								SMC.i.config.getMessage("chest-pay").send(new Replacer("{object}", SMC.vault.format(amount), "{name}", UString.format(SMC.i.config.getString("chests." + chestId + ".settings.name"))), player);
 								SMC.vault.withdrawPlayer(player, amount);
 							}
 						}
 						else if (price.contains("key "))
 						{
 							String keyId = price.replace("key ", "");
-							String keyItemName = UString.format(SMC.i.config.getLast().getString("keys." + keyId + ".name"));
-							String brut = SMC.i.config.getLast().getString("keys." + keyId + ".item");
+							String keyItemName = UString.format(SMC.i.config.getString("keys." + keyId + ".name"));
+							String brut = SMC.i.config.getString("keys." + keyId + ".item");
 							Material keyItemType = Material.getMaterial(brut.split(" ")[0]);
 							boolean payed = false;
 
@@ -124,11 +124,11 @@ public class PlayerInteract implements Listener
 
 							if (payed == false)
 							{
-								SMC.i.getMessage("chest-price").send(new Replacer("{object}", keyItemName), player);
+								SMC.i.config.getMessage("chest-price").send(new Replacer("{object}", keyItemName), player);
 								return;
 							}
 
-							SMC.i.getMessage("chest-pay").send(new Replacer("{object}", keyItemName, "{name}", UString.format(SMC.i.config.getLast().getString("chests." + chestId + ".settings.name"))), player);
+							SMC.i.config.getMessage("chest-pay").send(new Replacer("{object}", keyItemName, "{name}", UString.format(SMC.i.config.getString("chests." + chestId + ".settings.name"))), player);
 							player.updateInventory();
 						}
 

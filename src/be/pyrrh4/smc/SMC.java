@@ -7,6 +7,8 @@ import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,10 +20,10 @@ import be.pyrrh4.core.command.CommandCallInfo;
 import be.pyrrh4.core.command.CommandHandler;
 import be.pyrrh4.core.command.CommandSubHandler;
 import be.pyrrh4.core.messenger.Replacer;
-import be.pyrrh4.core.storage.Config;
-import be.pyrrh4.core.storage.ConfigFile;
+import be.pyrrh4.core.storage.PMLConvertor;
+import be.pyrrh4.core.storage.PMLWriter;
+import be.pyrrh4.core.util.ItemBuilder;
 import be.pyrrh4.core.util.UString;
-import be.pyrrh4.core.util.collection.ItemBuilder;
 import be.pyrrh4.smc.listeners.BlockBreak;
 import be.pyrrh4.smc.listeners.InventoryClick;
 import be.pyrrh4.smc.listeners.PlayerInteract;
@@ -47,7 +49,7 @@ public class SMC extends AbstractPlugin
 	public HashMap<Player, HashMap<String, Long>> cooldowns;
 
 	private CommandHandler handler;
-	public ConfigFile database;
+	public PMLWriter database;
 
 	// Initialize
 
@@ -58,8 +60,7 @@ public class SMC extends AbstractPlugin
 		setSetting(Setting.AUTO_UPDATE_URL, "https://www.spigotmc.org/resources/15755/");
 		setSetting(Setting.ALLOW_PUBLIC_MYSQL, true);
 		setSetting(Setting.HAS_STORAGE, true);
-		setSetting(Setting.CONFIG_FILE_NAME, "config.yml");
-		setSetting(Setting.CONFIG_PATH_MESSAGES, "msg");
+		setSetting(Setting.CONFIG_FILE_NAME, "config.pyrml");
 	}
 
 	// On enable
@@ -68,6 +69,92 @@ public class SMC extends AbstractPlugin
 	public void enable()
 	{
 		i = this;
+		config.loadTextPaths(this, "msg", null, null);
+
+		// Converting data
+
+		File f = new File(getStorage().getParentDirectory(), "config.yml");
+
+		if (f.exists())
+		{
+			PMLConvertor convertor = new PMLConvertor(this, f);
+			convertor.addPath("items.not-selected.type");
+			convertor.addPath("items.not-selected.data");
+			convertor.addPath("items.not-selected.amount");
+			convertor.addPath("items.not-selected.name");
+			convertor.addPath("items.not-selected.lore");
+			convertor.addPath("items.selected.type");
+			convertor.addPath("items.selected.data");
+			convertor.addPath("items.selected.amount");
+			convertor.addPath("items.selected.name");
+			convertor.addPath("items.selected.lore");
+			convertor.addPath("sounds.select.sound");
+			convertor.addPath("sounds.select.volume");
+			convertor.addPath("sounds.select.pitch");
+			convertor.addPath("sounds.roll.sound");
+			convertor.addPath("sounds.roll.volume");
+			convertor.addPath("sounds.roll.pitch");
+			convertor.addPath("sounds.finished.sound");
+			convertor.addPath("sounds.finished.volume");
+			convertor.addPath("sounds.finished.pitch");
+			convertor.addPath("sounds.reward.sound");
+			convertor.addPath("sounds.reward.volume");
+			convertor.addPath("sounds.reward.pitch");
+
+			YamlConfiguration cfg = YamlConfiguration.loadConfiguration(f);
+			ConfigurationSection sec = cfg.getConfigurationSection("keys");
+
+			if (sec != null)
+			{
+				for (String key : sec.getKeys(false))
+				{
+					convertor.addPath("keys." + key + ".type");
+					convertor.addPath("keys." + key + ".data");
+					convertor.addPath("keys." + key + ".name");
+					convertor.addPath("keys." + key + ".lore");
+				}
+			}
+
+			sec = cfg.getConfigurationSection("chests");
+
+			if (sec != null)
+			{
+				for (String key : sec.getKeys(false))
+				{
+					convertor.addPath("chests." + key + ".settings.name");
+					convertor.addPath("chests." + key + ".settings.price");
+					convertor.addPath("chests." + key + ".settings.delay");
+					convertor.addPath("chests." + key + ".settings.size");
+					convertor.addPath("chests." + key + ".settings.choice");
+
+					ConfigurationSection sec2 = cfg.getConfigurationSection("chests." + key + ".wins");
+
+					if (sec2 != null)
+					{
+						for (String key2 : sec2.getKeys(false))
+						{
+							convertor.addPath("chests." + key + ".wins." + key2 + ".chance");
+							convertor.addPath("chests." + key + ".wins." + key2 + ".item");
+							convertor.addPath("chests." + key + ".wins." + key2 + ".enchantments");
+							convertor.addPath("chests." + key + ".wins." + key2 + ".name");
+							convertor.addPath("chests." + key + ".wins." + key2 + ".lore");
+						}
+					}
+				}
+			}
+
+			convertor.addPath("msg.permission-error");
+			convertor.addPath("msg.chest-pay");
+			convertor.addPath("msg.chest-price");
+			convertor.addPath("msg.chest-delay");
+			convertor.addPath("msg.key-receive");
+			convertor.addPath("msg.inventory-rolling");
+			convertor.addPath("msg.inventory-finished");
+			convertor.convert();
+		}
+
+		// Vars
+
 		vault = getServer().getServicesManager().getRegistration(Economy.class).getProvider();
 
 		chestManager = new ChestManager();
@@ -79,16 +166,16 @@ public class SMC extends AbstractPlugin
 		definers = new HashMap<Player, String>();
 		cooldowns = new HashMap<Player, HashMap<String, Long>>();
 
-		database = getStorage().getConfig("chests.data");
+		database = getStorage().getPMLWriter("chests.data");
 
 		// Converting old data
 
 		File oldFile = new File(getDataFolder().getParentFile() + File.separator + "SMC", "database.yml");
 
-		if (oldFile.exists() && !database.getOrDefault("converted", false))
+		if (oldFile.exists() && !database.reader().getOrDefault("converted", false))
 		{
 			log(Level.INFO, "Starting converting old data from /SurvivalMysteryChests/database.yml to /pyrrh4_plugins/SurvivalMysteryChests/chests.data ...");
-			Config old = Config.loadConfiguration(this, oldFile);
+			YamlConfiguration old = YamlConfiguration.loadConfiguration(oldFile);
 			int loaded = 0;
 			int skipped = 0;
 
@@ -120,14 +207,18 @@ public class SMC extends AbstractPlugin
 				}
 			}
 
-			database.set("converted", true);
+			database.set("converted", true).save();
 			log(Level.INFO, "Successfully converted all chests from the old database file. " + loaded + " chest" + (loaded > 1 ? "s" : "") + " were loaded and " + skipped + " chest" + (skipped > 1 ? "s" : "") + " were skipped.");
 		}
 
 		// Commands
 
 		getCommand("survivalmysterychests").setExecutor(this);
-		handler = new CommandHandler("/survivalmysterychests", Core.getMessenger());
+
+		handler = new CommandHandler(this, "/survivalmysterychests", Core.getMessenger());
+		handler.addHelp("/pyr reload SurvivalMysteryChests", "reload the plugin", "pyr.core.admin");
+		handler.addHelp("/smc create [chest id]", "create a chest", "smc.chest.create");
+		handler.addHelp("/smc givekey [player] [key id]", "give a key to a player", "smc.key.give");
 
 		handler.addSubCommand(new CommandSubHandler(true, true, "smc.chest.create", new CommandArgumentsPattern("create [string]"))
 		{
@@ -139,7 +230,7 @@ public class SMC extends AbstractPlugin
 
 				// On vérifie que la clé est valide
 
-				if (!config.getLast().contains(id + ".settings.name"))
+				if (!config.contains(id + ".settings.name"))
 				{
 					Core.getMessenger().error(player, "MysteryChests >>", "Invalid id !");
 					return;
@@ -161,7 +252,7 @@ public class SMC extends AbstractPlugin
 
 				// On vérifie que la clé est valide
 
-				if (!config.getLast().contains("keys." + keyId + ".name"))
+				if (!config.contains("keys." + keyId + ".name"))
 				{
 					Core.getMessenger().error(player, "MysteryChests >>", "Invalid id !");
 					return;
@@ -169,15 +260,15 @@ public class SMC extends AbstractPlugin
 
 				// On ajoute l'item au joueur
 
-				ItemStack keyItem = ItemBuilder.fromConfig(config.getLast(), "keys." + keyId).build();
+				ItemStack keyItem = ItemBuilder.fromPMLReader(config, "keys." + keyId).build();
 				target.getInventory().addItem(keyItem);
 				target.updateInventory();
 
 				// On envoie des messages
 
-				String keyName = UString.format(config.getLast().getString("keys." + keyId + ".name"));
+				String keyName = UString.format(config.getString("keys." + keyId + ".name"));
 				Core.getMessenger().normal(player, "MysteryChests >>", "You gave a '" + keyName + "' key to " + target.getName() + " !");
-				getMessage("key-receive").send(new Replacer("{name}", keyName), target);
+				config.getMessage("key-receive").send(new Replacer("{name}", keyName), target);
 			}
 		});
 
@@ -191,26 +282,10 @@ public class SMC extends AbstractPlugin
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
 	{
-		if (args.length == 0)
-		{
-			// TODO : /help : /smc
-
-			Core.getMessenger().listMessage(sender, "MysteryChests >>", "This server is running " + getDescription().getName() + " version " + getDescription().getVersion() + ".");
-
-			if (sender.hasPermission("smc.chest.create")) {
-				Core.getMessenger().listSubMessage(sender, "  >>", "§a/smc create [chest id] §7: create a chest");
-			}
-
-			if (sender.hasPermission("smc.key.give")) {
-				Core.getMessenger().listSubMessage(sender, "  >>", "§a/smc givekey [player] [key id] §7: give a key to a player");
-			}
-
-			if (sender.hasPermission("pyr.core.admin")) {
-				Core.getMessenger().listSubMessage(sender, "  >>", "§a/pyr rl SurvivalMysteryChests §7: reload the plugin");
-			}
+		if (args.length == 0) {
+			handler.showHelp(sender);
 		}
-		else
-		{
+		else {
 			handler.execute(sender, args);
 		}
 
@@ -242,8 +317,8 @@ public class SMC extends AbstractPlugin
 	}
 
 	@Override
-	public String getAdditionnalPasteContent()
+	public String getAdditionalPasteContent()
 	{
-		return "\n" + "Chests (config) : " + config.getLast().getConfigurationSection("chests").getKeys(false).size() + "\n" + "Chests (registered) : " + database.getLast().getConfigurationSection("").getKeys(false).size();
+		return "\n" + "Chests (config) : " + config.getKeysForSection("chests", false).size() + "\n" + "Chests (registered) : " + database.reader().getKeysForSection("", true).size();
 	}
 }

@@ -2,6 +2,8 @@ package be.pyrrh4.smc.misc;
 
 import org.bukkit.entity.Player;
 
+import be.pyrrh4.core.util.UBukkit;
+
 public enum Permissions
 {
 	CREATE("smc.chest.create"),
@@ -23,6 +25,6 @@ public enum Permissions
 
 	public static boolean has(Player player, Permissions permission)
 	{
-		return (player.isOp() ? true : player.hasPermission(permission.getName()));
+		return (player.isOp() ? true : UBukkit.hasPermission(player, permission.getName()));
 	}
 }
