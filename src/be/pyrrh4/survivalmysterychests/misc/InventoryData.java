@@ -1,4 +1,4 @@
-package be.pyrrh4.smc.misc;
+package be.pyrrh4.survivalmysterychests.misc;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import be.pyrrh4.smc.SMC;
+import be.pyrrh4.survivalmysterychests.SMC;
 
 public class InventoryData
 {
@@ -104,7 +104,7 @@ public class InventoryData
 
 	public void remove()
 	{
-		SMC.i.inventoryManager.inventories.remove(this);
+		SMC.instance().getInventoryManager().getInventories().remove(this);
 
 		this.id = null;
 		this.inventory = null;

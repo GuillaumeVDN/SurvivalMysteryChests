@@ -1,6 +1,5 @@
-package be.pyrrh4.smc.listeners;
+package be.pyrrh4.survivalmysterychests.listeners;
 
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -8,8 +7,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import be.pyrrh4.smc.SMC;
-import be.pyrrh4.smc.misc.InventoryData;
+import be.pyrrh4.core.compat.sound.Sound;
+import be.pyrrh4.survivalmysterychests.SMC;
+import be.pyrrh4.survivalmysterychests.misc.InventoryData;
 
 public class InventoryClick implements Listener
 {
@@ -18,7 +18,7 @@ public class InventoryClick implements Listener
 	{
 		Inventory inventory = event.getInventory();
 		Player player = (Player) event.getWhoClicked();
-		InventoryData inventoryData = SMC.i.inventoryManager.getInventoryData(player);
+		InventoryData inventoryData = SMC.instance().getInventoryManager().getInventoryData(player);
 		int slot = event.getSlot();
 
 		if (slot < 0 || slot > 54) {
@@ -56,14 +56,11 @@ public class InventoryClick implements Listener
 
 						// On exécute les éventuelles commandes
 
-						SMC.i.commandsManager.executeCommands(item, inventoryData.getId(), player);
+						SMC.instance().getCommandsManager().executeCommands(item, inventoryData.getId(), player);
 
 						// On joue un son
 
-						player.playSound(player.getLocation(),
-								Sound.valueOf(SMC.i.config.getString("sounds.reward.sound")),
-								Float.valueOf(SMC.i.config.getString("sounds.reward.volume")),
-								Float.valueOf(SMC.i.config.getString("sounds.reward.pitch")));
+						Sound.valueOf(SMC.instance().getConfiguration().getString("sounds.reward")).play(player);
 
 						// On supprime le slot
 
@@ -84,19 +81,16 @@ public class InventoryClick implements Listener
 						return;
 					}
 
-					SMC.i.inventoryManager.updateInventory(inventory, slot);
+					SMC.instance().getInventoryManager().updateInventory(inventory, slot);
 
 					// On joue un son
 
-					player.playSound(player.getLocation(),
-							Sound.valueOf(SMC.i.config.getString("sounds.select.sound")),
-							Float.valueOf(SMC.i.config.getString("sounds.select.volume")),
-							Float.valueOf(SMC.i.config.getString("sounds.select.pitch")));
+					Sound.valueOf(SMC.instance().getConfiguration().getString("sounds.select")).play(player);
 
 					// On vérifie s'il ne faut pas lancer la roulette
 
-					if (inventoryData.getChoices().size() >= SMC.i.config.getInt(inventoryData.getId() + ".settings.choice")){
-						SMC.i.rollManager.launchRoll(inventoryData);
+					if (inventoryData.getChoices().size() >= SMC.instance().getConfiguration().getInt(inventoryData.getId() + ".settings.choice")){
+						SMC.instance().getRollManager().launchRoll(inventoryData);
 					}
 				}
 			}

@@ -1,9 +1,14 @@
 #----------------------------------------------------------------------------------------------------
 # Configuration file for SurvivalMysteryChests plugin !
+# Open it with Notepad++, and use Language > Makefile to get the colors !
 #----------------------------------------------------------------------------------------------------
 # This is a Pyr Markup Language file (.pyrml). It's a brand new markup language system which is
 # similar but simpler than YML. Tutorial : https://www.spigotmc.org/wiki/pyrml-tutorial/
 #----------------------------------------------------------------------------------------------------
+
+# Locale
+
+locale=survivalmysterychests_en_US.pyrml
 
 #----------------------------------------------------------------------------------------------------
 # Items
@@ -28,27 +33,14 @@ items=
 #----------------------------------------------------------------------------------------------------
 # Sounds
 #----------------------------------------------------------------------------------------------------
-# WARNING : THIS MAY CHANGE FROM A VERSION TO ANOTHER. BEFORE REPORTING ERRORS, BE SURE THAT THESE
-# SOUNDS ARE CORRECT AND ARE COMPATIBLE WITH YOUR SERVER VERSION !
+# List of sounds : http://www.pyrrh4.be/doc/sounds/
 #----------------------------------------------------------------------------------------------------
 
 sounds=
-  select=
-    sound=FIREWORK_BLAST2
-    volume=1.0
-    pitch=1.0
-  roll=
-    sound=ITEM_PICKUP
-    volume=1.0
-    pitch=6.0
-  finished=
-    sound=FIREWORK_LAUNCH
-    volume=1.0
-    pitch=1.0
-  reward=
-    sound=ORB_PICKUP
-    volume=1.0
-    pitch=1.0
+  select=FIREWORK_BLAST2
+  roll=ITEM_PICKUP
+  finished=FIREWORK_LAUNCH
+  reward=ORB_PICKUP
 
 #----------------------------------------------------------------------------------------------------
 # Here you can create unlimited keys types.
@@ -191,25 +183,3 @@ chests=
       tnt=
         chance=50
         item=TNT 0 random{1,20}
-
-#----------------------------------------------------------------------------------------------------
-# Messages
-# Default language is english ; alternative languages are
-#  commented below.
-#----------------------------------------------------------------------------------------------------
-
-msg=
-  permission-error=&4MysteryChests >> &cYou don't have the permission to do that !
-# FRA- &4MysteryChests >> &cTu n'as la permission de faire cela !
-  chest-pay=&2MysteryChests >> &aYou used {object} &ato open {name} &a!
-#	FRA- &2MysteryChests >> &aTu as utilisé {object} &apour ouvrir {name} &a!
-  chest-price=&4MysteryChests >> &cYou need {object} &ato open this chest !
-#	FRA- &4MysteryChests >> &cTu as besoin de {object} &apour ouvrir ce coffre !
-  chest-delay=&4MysteryChests >> &cYou have to wait {time} seconds to open this chest again !=
-#	FRA- &4MysteryChests >> &cTu dois attendre {time} secondes pour ouvrir à nouveau ce coffre !
-  key-receive=&2MysteryChests >> &aYou received a key : {name} &a!
-#	FRA- &2MysteryChests >> &aTu as reçu une clé : {name} &a!
-  inventory-rolling=Rolling...
-#	FRA- Défilement...
-  inventory-finished=You won !
-#	FRA- Tu as gagné !

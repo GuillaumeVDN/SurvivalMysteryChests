@@ -1,11 +1,10 @@
-package be.pyrrh4.smc.managers;
+package be.pyrrh4.survivalmysterychests.managers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
-import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,38 +16,44 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import be.pyrrh4.core.storage.PMLReader;
-import be.pyrrh4.core.util.ItemBuilder;
-import be.pyrrh4.core.util.UString;
-import be.pyrrh4.smc.SMC;
-import be.pyrrh4.smc.misc.InventoryData;
+import be.pyrrh4.core.Logger;
+import be.pyrrh4.core.Logger.Level;
+import be.pyrrh4.core.gui.GUI;
+import be.pyrrh4.core.storage.PMLConfiguration;
+import be.pyrrh4.core.util.Utils;
+import be.pyrrh4.survivalmysterychests.SMC;
+import be.pyrrh4.survivalmysterychests.misc.InventoryData;
 
 public class InventoryManager
 {
-	public Random random = new Random();
-	public HashMap<String, HashMap<String, ItemStack>> items;
-	public ArrayList<InventoryData> inventories;
-	public ItemStack selectedItem;
-	public ItemStack notSelectedItem;
+	private Random random = new Random();
+	private HashMap<String, HashMap<String, ItemStack>> items;
+	private ArrayList<InventoryData> inventories;
+	private ItemStack selectedItem;
+	private ItemStack notSelectedItem;
 
 	public InventoryManager()
 	{
 		random = new Random();
 		items = new HashMap<String, HashMap<String, ItemStack>>();
 		inventories = new ArrayList<InventoryData>();
-		selectedItem = ItemBuilder.fromPMLReader(SMC.i.config, "items.selected").build();
-		notSelectedItem = ItemBuilder.fromPMLReader(SMC.i.config, "items.not-selected").build();
+		selectedItem = SMC.instance().getConfiguration().getItem("items.selected").getItem();
+		notSelectedItem = SMC.instance().getConfiguration().getItem("items.not-selected").getItem();
 
 		loadItems();
+	}
+
+	public ArrayList<InventoryData> getInventories() {
+		return inventories;
 	}
 
 	@SuppressWarnings("deprecation")
 	public void loadItems()
 	{
-		SMC.i.log(Level.INFO, "Loading items...");
-		PMLReader reader = SMC.i.config;
+		Logger.log(Level.INFO, SMC.instance(), "Loading items...");
+		PMLConfiguration config = SMC.instance().getConfiguration();
 
-		for (Entry<String, Object> e : reader.getValuesForSection("").entrySet())
+		for (Entry<String, Object> e : config.getValuesForSection("").entrySet())
 		{
 			String chestId = e.getKey();
 			HashMap<String, ItemStack> items = new HashMap<String, ItemStack>();
@@ -57,7 +62,7 @@ public class InventoryManager
 			{
 				// On parcourt la liste des récompenses
 
-				for (Entry<String, Object> entry : reader.getValuesForSection("chests." + chestId + ".wins").entrySet())
+				for (Entry<String, Object> entry : config.getValuesForSection("chests." + chestId + ".wins").entrySet())
 				{
 					String id = entry.getKey();
 					MemorySection memorySection = (MemorySection) entry.getValue();
@@ -68,15 +73,17 @@ public class InventoryManager
 						String brut = memorySection.getString("item");
 						Material type = Material.getMaterial(brut.split(" ")[0]);
 						int data = Integer.parseInt(brut.split(" ")[1]);
-						String name = reader.getString(memorySection.getCurrentPath() + ".name");
-						List<String> lore = reader.getListOfString(memorySection.getCurrentPath() + ".lore");
+						String name = config.getString(memorySection.getCurrentPath() + ".name");
+						List<String> lore = config.getList(memorySection.getCurrentPath() + ".lore");
 						ItemStack item;
 
-						if (name != null)
-							name = UString.format(name);
+						if (name != null) {
+							name = Utils.format(name);
+						}
 
-						if (lore != null)
-							lore = UString.format(lore);
+						if (lore != null) {
+							lore = Utils.format(lore);
+						}
 
 						if (name == null)
 						{
@@ -89,8 +96,9 @@ public class InventoryManager
 								item.setItemMeta(meta);
 							}
 						}
-						else
-							item = new ItemBuilder(type, (byte) data, 1).setName(name).addLore(lore.toArray(new String[lore.size()])).build();
+						else {
+							item = GUI.createItem(type, (byte) data, 1, name, lore);
+						}
 
 						if (memorySection.contains("enchantments"))
 						{
@@ -111,7 +119,7 @@ public class InventoryManager
 			this.items.put(chestId, items);
 		}
 
-		SMC.i.log(Level.INFO, "Items loaded.");
+		Logger.log(Level.INFO, SMC.instance(), "Items loaded.");
 	}
 
 	// Mise à jour de l'inventaire avec un nouveau choix
@@ -133,8 +141,8 @@ public class InventoryManager
 
 	public Inventory getEmptyChoiceInventory(String id, Player player)
 	{
-		String name = UString.format(SMC.i.config.getString("chests." + id + ".settings.name"));
-		int size = SMC.i.config.getInt("chests." + id + ".settings.size");
+		String name = Utils.format(SMC.instance().getConfiguration().getString("chests." + id + ".settings.name"));
+		int size = SMC.instance().getConfiguration().getInt("chests." + id + ".settings.size");
 		Inventory inventory = Bukkit.createInventory(player, size, name);
 
 		// On ajoute les items
@@ -183,7 +191,7 @@ public class InventoryManager
 			i++;
 		}
 
-		String brutAmount = SMC.i.config.getString("chests." + chestId + ".wins." + rewardId + ".item").split(" ")[2];
+		String brutAmount = SMC.instance().getConfiguration().getString("chests." + chestId + ".wins." + rewardId + ".item").split(" ")[2];
 		int amount = 0;
 
 		if (brutAmount.contains("random"))

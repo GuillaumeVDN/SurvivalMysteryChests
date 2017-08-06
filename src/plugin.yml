@@ -1,9 +1,9 @@
 name: SurvivalMysteryChests
-version: 1.6.0
-main: be.pyrrh4.smc.SMC
+version: 1.7.0
+main: be.pyrrh4.survivalmysterychests.SMC
 depend: [PyrCore,Vault]
 author: PYRRH4
-website: https://www.spigotmc.org/resources/authors/pyrrh4.70459/
+website: www.pyrrh4.be
 commands:
   survivalmysterychests:
     description: Main command !

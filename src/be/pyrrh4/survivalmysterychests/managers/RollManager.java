@@ -1,13 +1,13 @@
-package be.pyrrh4.smc.managers;
+package be.pyrrh4.survivalmysterychests.managers;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import be.pyrrh4.smc.SMC;
-import be.pyrrh4.smc.misc.InventoryData;
+import be.pyrrh4.core.compat.sound.Sound;
+import be.pyrrh4.survivalmysterychests.SMC;
+import be.pyrrh4.survivalmysterychests.misc.InventoryData;
 
 public class RollManager
 {
@@ -16,7 +16,7 @@ public class RollManager
 		final Inventory inv = inventoryData.getInventory();
 		final Player player = inventoryData.getPlayer();
 		final String id = inventoryData.getId();
-		final Inventory inventory = Bukkit.createInventory(player, inv.getSize(), SMC.i.config.getMessage("inventory-rolling").getLines(null).get(0));
+		final Inventory inventory = Bukkit.createInventory(player, inv.getSize(), SMC.instance().getLocale().getMessage("inventory-rolling").getLines().get(0));
 
 		// On actualise l'inventaire
 
@@ -30,6 +30,7 @@ public class RollManager
 
 		// On lance la première tâche de 4 secondes
 
+		// TODO : 3 tasks, what a genius ;-; change this
 		new BukkitRunnable()
 		{
 			int remaining = 20 * 4;
@@ -81,7 +82,7 @@ public class RollManager
 
 										roll(player, inventory, id);
 									}
-								}.runTaskTimer(SMC.i, 0L, 8L);
+								}.runTaskTimer(SMC.instance(), 0L, 8L);
 
 								// On cancel la deuxi§me tâche
 
@@ -92,7 +93,7 @@ public class RollManager
 
 							roll(player, inventory, id);
 						}
-					}.runTaskTimer(SMC.i, 0L, 5L);
+					}.runTaskTimer(SMC.instance(), 0L, 5L);
 
 					// On cancel la première tâche
 
@@ -103,28 +104,22 @@ public class RollManager
 
 				roll(player, inventory, id);
 			}
-		}.runTaskTimer(SMC.i, 0L, 2L);
+		}.runTaskTimer(SMC.instance(), 0L, 2L);
 	}
 
 	private void roll(Player player, Inventory inventory, String id)
 	{
-		// On joue un son
-
-		player.playSound(player.getLocation(),
-				Sound.valueOf(SMC.i.config.getString("sounds.roll.sound")),
-				Float.valueOf(SMC.i.config.getString("sounds.roll.volume")),
-				Float.valueOf(SMC.i.config.getString("sounds.roll.pitch")));
-
-		// On affiche les items
-
-		SMC.i.inventoryManager.roll(inventory, id);
+		// on joue un son
+		Sound.valueOf(SMC.instance().getConfiguration().getString("sounds.roll")).play(player);
+		// on affiche les items
+		SMC.instance().getInventoryManager().roll(inventory, id);
 	}
 
 	private void finish(InventoryData inventoryData)
 	{
 		Player player = inventoryData.getPlayer();
 		Inventory inv = inventoryData.getInventory();
-		Inventory inventory = Bukkit.createInventory(player, inv.getSize(), SMC.i.config.getMessage("inventory-finished").getLines(null).get(0));
+		Inventory inventory = Bukkit.createInventory(player, inv.getSize(), SMC.instance().getLocale().getMessage("inventory-finished").getLines().get(0));
 
 		// On actualise l'inventaire
 
@@ -141,9 +136,6 @@ public class RollManager
 
 		// On joue un son
 
-		player.playSound(player.getLocation(),
-				Sound.valueOf(SMC.i.config.getString("sounds.finished.sound")),
-				Float.valueOf(SMC.i.config.getString("sounds.finished.volume")),
-				Float.valueOf(SMC.i.config.getString("sounds.finished.pitch")));
+		Sound.valueOf(SMC.instance().getConfiguration().getString("sounds.finished")).play(player);
 	}
 }
