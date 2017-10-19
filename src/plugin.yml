@@ -1,7 +1,7 @@
 name: SurvivalMysteryChests
-version: 1.7.0
+version: 1.7.1
 main: be.pyrrh4.survivalmysterychests.SMC
-depend: [PyrCore,Vault]
+depend: [PyrCore]
 author: PYRRH4
 website: www.pyrrh4.be
 commands:

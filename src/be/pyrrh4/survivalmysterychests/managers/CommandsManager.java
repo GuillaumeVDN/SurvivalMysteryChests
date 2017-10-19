@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 
-import be.pyrrh4.core.storage.PMLConfiguration;
+import be.pyrrh4.core.storage.YMLConfiguration;
 import be.pyrrh4.core.util.Utils;
 import be.pyrrh4.survivalmysterychests.SMC;
 
@@ -24,7 +24,7 @@ public class CommandsManager
 
 	public ArrayList<String> getCommands(ItemStack item, String chestId)
 	{
-		PMLConfiguration config = SMC.instance().getConfiguration();
+		YMLConfiguration config = SMC.instance().getConfiguration();
 		ArrayList<String> commands = new ArrayList<String>();
 
 		// On parcourt la liste des actions

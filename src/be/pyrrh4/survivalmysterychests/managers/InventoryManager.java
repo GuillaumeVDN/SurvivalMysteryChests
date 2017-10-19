@@ -19,7 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import be.pyrrh4.core.Logger;
 import be.pyrrh4.core.Logger.Level;
 import be.pyrrh4.core.gui.GUI;
-import be.pyrrh4.core.storage.PMLConfiguration;
+import be.pyrrh4.core.storage.YMLConfiguration;
 import be.pyrrh4.core.util.Utils;
 import be.pyrrh4.survivalmysterychests.SMC;
 import be.pyrrh4.survivalmysterychests.misc.InventoryData;
@@ -47,11 +47,10 @@ public class InventoryManager
 		return inventories;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void loadItems()
 	{
 		Logger.log(Level.INFO, SMC.instance(), "Loading items...");
-		PMLConfiguration config = SMC.instance().getConfiguration();
+		YMLConfiguration config = SMC.instance().getConfiguration();
 
 		for (Entry<String, Object> e : config.getValuesForSection("").entrySet())
 		{

@@ -18,7 +18,7 @@ public class Chest
 	public Chest(String path, Location loc) {
 		this.path = path;
 		this.loc = loc;
-		this.cooldownDelay = SMC.instance().getConfiguration().getLong("chests." + path + ".settings.delay") * 1000L;
+		this.cooldownDelay = (long) (SMC.instance().getConfiguration().getLong("chests." + path + ".settings.delay") * 1000);
 	}
 
 	public String getPath() {
