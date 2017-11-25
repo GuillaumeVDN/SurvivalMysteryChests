@@ -1,5 +1,5 @@
 name: SurvivalMysteryChests
-version: 1.7.1
+version: 1.7.2
 main: be.pyrrh4.survivalmysterychests.SMC
 depend: [PyrCore]
 author: PYRRH4

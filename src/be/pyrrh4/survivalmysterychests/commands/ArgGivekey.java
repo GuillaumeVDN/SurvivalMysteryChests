@@ -24,7 +24,7 @@ public class ArgGivekey implements Performer
 			return;
 		}
 
-		ItemStack keyItem = SMC.instance().getConfiguration().getItem("keys." + keyId).getItem();
+		ItemStack keyItem = SMC.instance().getConfiguration().getItem("keys." + keyId, "", "").getItem();
 		target.getInventory().addItem(keyItem);
 		target.updateInventory();
 

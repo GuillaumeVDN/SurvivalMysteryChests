@@ -28,81 +28,42 @@ public class RollManager
 
 		inventoryData.setRolling(true);
 
-		// On lance la première tâche de 4 secondes
+		// On lance la tâche
 
-		// TODO : 3 tasks, what a genius ;-; change this
 		new BukkitRunnable()
 		{
-			int remaining = 20 * 4;
+			private long left = 220L, interval = 2L, current = 0L;
 
-			@Override
 			public void run()
 			{
-				remaining -= 2;
+				// checking time left
+				left -= 20L;
 
-				if (remaining <= 0)
-				{
-					// On lance la deuxième tâche de 3 secondes
-
-					new BukkitRunnable()
-					{
-						int remaining = 20 * 3;
-
-						@Override
-						public void run()
-						{
-							remaining -= 5;
-
-							if (remaining <= 0)
-							{
-								// On lance la troisième tâche de 2 secondes
-
-								new BukkitRunnable()
-								{
-									int remaining = 20 * 2;
-
-									@Override
-									public void run()
-									{
-										remaining -= 8;
-
-										if (remaining <= 0)
-										{
-											// On roll une dernière fois
-
-											roll(player, inventory, id);
-											finish(inventoryData);
-
-											// On cancel la troisième tâche
-
-											cancel();
-										}
-
-										// On roll
-
-										roll(player, inventory, id);
-									}
-								}.runTaskTimer(SMC.instance(), 0L, 8L);
-
-								// On cancel la deuxi§me tâche
-
-								cancel();
-							}
-
-							// On roll
-
-							roll(player, inventory, id);
-						}
-					}.runTaskTimer(SMC.instance(), 0L, 5L);
-
-					// On cancel la première tâche
-
+				// end
+				if (left == 0L) {
+					// last roll
+					roll(player, inventory, id);
+					finish(inventoryData);
 					cancel();
+					return;
 				}
 
-				// On roll
+				// changing interval
+				if (left == 120L) {
+					interval = 3L;
+				} else if (left == 80L) {
+					interval = 5L;
+				} else if (left == 40L) {
+					interval = 8L;
+				}
 
-				roll(player, inventory, id);
+				// updating current ticks
+				current += 2L;
+				if (current == interval) {
+					// roll and reset
+					current = 0L;
+					roll(player, inventory, id);
+				}
 			}
 		}.runTaskTimer(SMC.instance(), 0L, 2L);
 	}

@@ -37,8 +37,8 @@ public class InventoryManager
 		random = new Random();
 		items = new HashMap<String, HashMap<String, ItemStack>>();
 		inventories = new ArrayList<InventoryData>();
-		selectedItem = SMC.instance().getConfiguration().getItem("items.selected").getItem();
-		notSelectedItem = SMC.instance().getConfiguration().getItem("items.not-selected").getItem();
+		selectedItem = SMC.instance().getConfiguration().getItem("items.selected", "", "").getItem();
+		notSelectedItem = SMC.instance().getConfiguration().getItem("items.not-selected", "", "").getItem();
 
 		loadItems();
 	}
