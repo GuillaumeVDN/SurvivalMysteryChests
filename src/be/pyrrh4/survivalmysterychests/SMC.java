@@ -6,9 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import be.pyrrh4.core.Core;
 import be.pyrrh4.core.PyrPlugin;
-import be.pyrrh4.core.User;
 import be.pyrrh4.core.command.Arguments;
 import be.pyrrh4.core.command.Command;
 import be.pyrrh4.core.util.Utils;
@@ -45,7 +43,7 @@ public class SMC extends PyrPlugin
 	private RollManager rollManager;
 	private CommandsManager commandsManager;
 	private HashMap<Player, String> definers;
-	private MainData mainData;
+	private SurvivalMysteryChestsData survivalMysteryChestsData;
 
 	public InventoryManager getInventoryManager() {
 		return inventoryManager;
@@ -63,10 +61,6 @@ public class SMC extends PyrPlugin
 		return definers;
 	}
 
-	public MainData getMainData() {
-		return mainData;
-	}
-
 	// ------------------------------------------------------------
 	// Preload
 	// ------------------------------------------------------------
@@ -74,23 +68,20 @@ public class SMC extends PyrPlugin
 	@Override
 	protected void init()
 	{
-		getSettings().autoUpdateUrl("https://www.spigotmc.org/resources/15755/");
+		//getSettings().autoUpdateUrl("https://www.spigotmc.org/resources/15755/");
 		getSettings().localeConfigName("locale");
 		getSettings().localeDefault("survivalmysterychests_en_US.yml");
 	}
 
 	@Override
-	public void initUserPluginData(User user) {}
-
-	@Override
 	protected void initStorage() {
 		// Main data
-		mainData = Utils.getPluginData(Core.getDataStorage().getFile("survivalmysterychests.data"), new MainData());
+		survivalMysteryChestsData = Utils.getPluginData(SurvivalMysteryChestsData.class);
 	}
 
 	@Override
 	protected void savePluginData() {
-		mainData.save();
+		survivalMysteryChestsData.save();
 	}
 
 	// ------------------------------------------------------------
@@ -131,19 +122,19 @@ public class SMC extends PyrPlugin
 	public void registerChest(String id, Location location)
 	{
 		Chest chest = new Chest(id, location);
-		mainData.getChests().add(chest);
-		mainData.save();
+		survivalMysteryChestsData.getChests().add(chest);
+		survivalMysteryChestsData.save();
 	}
 
 	public void unregisterChest(Chest chest)
 	{
-		mainData.getChests().remove(chest);
-		mainData.save();
+		survivalMysteryChestsData.getChests().remove(chest);
+		survivalMysteryChestsData.save();
 	}
 
 	public Chest getChest(Location location)
 	{
-		for (Chest chest : mainData.getChests()) {
+		for (Chest chest : survivalMysteryChestsData.getChests()) {
 			if (Utils.coordsEquals(chest.getLocation(), location)) {
 				return chest;
 			}

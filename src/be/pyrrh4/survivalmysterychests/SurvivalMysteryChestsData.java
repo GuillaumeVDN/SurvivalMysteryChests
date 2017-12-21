@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import be.pyrrh4.core.PluginData;
 
-public class MainData extends PluginData
+public class SurvivalMysteryChestsData extends PluginData
 {
 	// ------------------------------------------------------------
 	// Fields and methods

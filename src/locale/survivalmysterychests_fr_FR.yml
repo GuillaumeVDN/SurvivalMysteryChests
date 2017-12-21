@@ -7,5 +7,5 @@ messages:
   chest-price: '&4MysteryChests >> &cTu as besoin de $OBJECT &apour ouvrir ce coffre !'
   chest-delay: '&4MysteryChests >> &cTu dois attendre $TIME pour ouvrir à nouveau ce coffre !'
   key-receive: '&2MysteryChests >> &aTu as reçu une clé : $NAME &a!'
-  inventory-rolling: Défilement...
-  inventory-finished: Tu as gagné !
+  inventory-rolling: 'Défilement...'
+  inventory-finished: 'Tu as gagné !'
