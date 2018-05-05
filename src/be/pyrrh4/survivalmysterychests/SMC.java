@@ -7,7 +7,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import be.pyrrh4.core.PyrPlugin;
-import be.pyrrh4.core.command.Arguments;
 import be.pyrrh4.core.command.Command;
 import be.pyrrh4.core.util.Utils;
 import be.pyrrh4.survivalmysterychests.commands.ArgCreate;
@@ -105,9 +104,7 @@ public class SMC extends PyrPlugin
 		definers = new HashMap<Player, String>();
 
 		// commands
-		Command command = new Command(this, "survivalmysterychests", "smc", null);
-		command.addArguments(new Arguments("create [string]", "create [chest]", "create a chest", "smc.chest.create", true, new ArgCreate()));
-		command.addArguments(new Arguments("givekey [player] [string]", "givekey [player] [chest id]", "give a key to a player", "smc.key.give", true, new ArgGivekey()));
+		registerCommand(new Command(this, "survivalmysterychests", "smc", new ArgCreate(), new ArgGivekey()));
 
 		// events
 		Bukkit.getPluginManager().registerEvents(new BlockBreak(), this);
