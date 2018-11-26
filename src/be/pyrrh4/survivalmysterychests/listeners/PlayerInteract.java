@@ -2,7 +2,6 @@ package be.pyrrh4.survivalmysterychests.listeners;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,7 +11,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import be.pyrrh4.core.compat.econ.EconomyHandler;
+import be.pyrrh4.core.economy.EconomyHandler;
+import be.pyrrh4.core.material.Mat;
+import be.pyrrh4.core.messenger.Locale;
 import be.pyrrh4.core.messenger.Messenger;
 import be.pyrrh4.core.messenger.Messenger.Level;
 import be.pyrrh4.core.util.Utils;
@@ -78,12 +79,12 @@ public class PlayerInteract implements Listener
 
 							if (amount > bank)
 							{
-								SMC.instance().getLocale().getMessage("chest-price").send(player, "$OBJECT", EconomyHandler.INSTANCE.format(amount));
+								Locale.MSG_SURVIVALMYSTERYCHESTS_CHESTPRICE.getActive().send(player, "{object}", EconomyHandler.INSTANCE.format(amount));
 								return;
 							}
 							else
 							{
-								SMC.instance().getLocale().getMessage("chest-pay").send(player, "$OBJECT", EconomyHandler.INSTANCE.format(amount), "$NAME", SMC.instance().getConfiguration().getStringFormatted("chests." + chest.getPath() + ".settings.name"));
+								Locale.MSG_SURVIVALMYSTERYCHESTS_CHESTPAY.getActive().send(player, "{object}", EconomyHandler.INSTANCE.format(amount), "{name}", SMC.instance().getConfiguration().getStringFormatted("chests." + chest.getPath() + ".settings.name"));
 								EconomyHandler.INSTANCE.take(player, amount);
 							}
 						}
@@ -92,7 +93,7 @@ public class PlayerInteract implements Listener
 							String keyId = price.replace("key ", "");
 							String keyItemName = SMC.instance().getConfiguration().getStringFormatted("keys." + keyId + ".name");
 							String brut = SMC.instance().getConfiguration().getString("keys." + keyId + ".item");
-							Material keyItemType = Material.getMaterial(brut.split(" ")[0]);
+							Mat keyItemType = Mat.from(brut, 0);
 							boolean payed = false;
 
 							for (int i = 0; i < player.getInventory().getSize(); i++)
@@ -102,7 +103,7 @@ public class PlayerInteract implements Listener
 								if (item == null || !(item.hasItemMeta()) || (item.hasItemMeta() && !(item.getItemMeta().hasDisplayName())))
 									continue;
 
-								if (item.getType().equals(keyItemType) && ChatColor.stripColor(item.getItemMeta().getDisplayName()).equals(ChatColor.stripColor(keyItemName)))
+								if (keyItemType.isMat(item) && ChatColor.stripColor(item.getItemMeta().getDisplayName()).equals(ChatColor.stripColor(keyItemName)))
 								{
 									int amount = item.getAmount();
 
@@ -125,11 +126,11 @@ public class PlayerInteract implements Listener
 
 							if (payed == false)
 							{
-								SMC.instance().getLocale().getMessage("chest-price").send(player, "$OBJECT", keyItemName);
+								Locale.MSG_SURVIVALMYSTERYCHESTS_CHESTPRICE.getActive().send(player, "{object}", keyItemName);
 								return;
 							}
 
-							SMC.instance().getLocale().getMessage("chest-pay").send(player, "$OBJECT", keyItemName, "$NAME", SMC.instance().getConfiguration().getStringFormatted("chests." + chest.getPath() + ".settings.name"));
+							Locale.MSG_SURVIVALMYSTERYCHESTS_CHESTPAY.getActive().send(player, "{object}", keyItemName, "{name}", SMC.instance().getConfiguration().getStringFormatted("chests." + chest.getPath() + ".settings.name"));
 							player.updateInventory();
 						}
 

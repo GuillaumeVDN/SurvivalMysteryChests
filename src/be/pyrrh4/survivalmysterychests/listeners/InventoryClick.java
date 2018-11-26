@@ -7,7 +7,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import be.pyrrh4.core.compat.sound.Sound;
+import be.pyrrh4.core.versioncompat.sound.Sound;
 import be.pyrrh4.survivalmysterychests.SMC;
 import be.pyrrh4.survivalmysterychests.misc.InventoryData;
 

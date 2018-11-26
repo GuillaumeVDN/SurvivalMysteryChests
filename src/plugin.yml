@@ -4,7 +4,8 @@ author: PYRRH4
 website: www.pyrrh4.be
 description: 'Mystery chests for your survival server !'
 # Techy
-version: 1.7.6
+version: 1.7.9
+api-version: 1.13
 main: be.pyrrh4.survivalmysterychests.SMC
 depend: [PyrCore]
 commands:
@@ -12,7 +13,5 @@ commands:
     description: Main command !
     aliases: [smc]
 permissions:
-  smc.chest.create:
-    default: op
-  smc.key.give:
+  survivalmysterychests.admin:
     default: op

@@ -6,8 +6,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import be.pyrrh4.core.Perm;
 import be.pyrrh4.core.PyrPlugin;
-import be.pyrrh4.core.command.Command;
+import be.pyrrh4.core.command.CommandRoot;
 import be.pyrrh4.core.util.Utils;
 import be.pyrrh4.survivalmysterychests.commands.ArgCreate;
 import be.pyrrh4.survivalmysterychests.commands.ArgGivekey;
@@ -61,26 +62,25 @@ public class SMC extends PyrPlugin
 	}
 
 	// ------------------------------------------------------------
-	// Preload
+	// Pre enable
 	// ------------------------------------------------------------
 
 	@Override
-	protected void init()
-	{
-		//getSettings().autoUpdateUrl("https://www.spigotmc.org/resources/15755/");
-		getSettings().localeConfigName("locale");
-		getSettings().localeDefault("survivalmysterychests_en_US.yml");
+	protected boolean preEnable() {
+		this.spigotResourceId = 15755;
+		return false;
 	}
 
 	@Override
-	protected void initStorage() {
-		// Main data
+	protected void loadStorage() {
 		survivalMysteryChestsData = Utils.getPluginData(SurvivalMysteryChestsData.class);
 	}
 
 	@Override
-	protected void savePluginData() {
-		survivalMysteryChestsData.save();
+	protected void saveStorage() {
+		if (survivalMysteryChestsData != null) {
+			survivalMysteryChestsData.saveData();
+		}
 	}
 
 	// ------------------------------------------------------------
@@ -88,28 +88,33 @@ public class SMC extends PyrPlugin
 	// ------------------------------------------------------------
 
 	@Override
-	protected void innerReload() {}
+	protected void reloadInner() {
+	}
 
 	// ------------------------------------------------------------
 	// On enable
 	// ------------------------------------------------------------
 
 	@Override
-	protected void enable()
-	{
+	protected boolean enable() {
 		// settings
 		inventoryManager = new InventoryManager();
 		rollManager = new RollManager();
 		commandsManager = new CommandsManager();
 		definers = new HashMap<Player, String>();
 
-		// commands
-		registerCommand(new Command(this, "survivalmysterychests", "smc", new ArgCreate(), new ArgGivekey()));
-
 		// events
 		Bukkit.getPluginManager().registerEvents(new BlockBreak(), this);
 		Bukkit.getPluginManager().registerEvents(new InventoryClick(), this);
 		Bukkit.getPluginManager().registerEvents(new PlayerInteract(), this);
+
+		// commands
+		CommandRoot root = new CommandRoot(this, Utils.asList("survivalmysterychests", "smc"), null, Perm.SURVIVALMYSTERYCHESTS_ADMIN, false);
+		root.addChild(new ArgCreate());
+		root.addChild(new ArgGivekey());
+
+		// return
+		return true;
 	}
 
 	// ------------------------------------------------------------
@@ -117,7 +122,8 @@ public class SMC extends PyrPlugin
 	// ------------------------------------------------------------
 
 	@Override
-	protected void disable() {}
+	protected void disable() {
+	}
 
 	// ------------------------------------------------------------
 	// Utils
@@ -127,13 +133,13 @@ public class SMC extends PyrPlugin
 	{
 		Chest chest = new Chest(id, location);
 		survivalMysteryChestsData.getChests().add(chest);
-		survivalMysteryChestsData.save();
+		survivalMysteryChestsData.mustSave(true);
 	}
 
 	public void unregisterChest(Chest chest)
 	{
 		survivalMysteryChestsData.getChests().remove(chest);
-		survivalMysteryChestsData.save();
+		survivalMysteryChestsData.mustSave(true);
 	}
 
 	public Chest getChest(Location location)

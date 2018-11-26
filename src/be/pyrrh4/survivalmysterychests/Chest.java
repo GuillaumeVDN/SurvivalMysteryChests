@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import be.pyrrh4.core.messenger.Locale;
 import be.pyrrh4.core.util.Utils;
 
 public class Chest
@@ -42,7 +43,7 @@ public class Chest
 			}
 			else
 			{
-				SMC.instance().getLocale().getMessage("chest-delay").send(player, "$TIME", Utils.formatDurationMillis(cooldownDelay - (System.currentTimeMillis() - cooldowns.get(uuid))));
+				Locale.MSG_GENERIC_COOLDOWN.getActive().send(player, "{plugin}", SMC.instance().getName(), "{time}", Utils.formatDurationMillis(cooldownDelay - (System.currentTimeMillis() - cooldowns.get(uuid))));
 				return true;
 			}
 		}

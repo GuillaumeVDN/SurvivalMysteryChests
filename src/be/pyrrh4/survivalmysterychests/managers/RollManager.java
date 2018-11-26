@@ -5,7 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import be.pyrrh4.core.compat.sound.Sound;
+import be.pyrrh4.core.messenger.Locale;
+import be.pyrrh4.core.versioncompat.sound.Sound;
 import be.pyrrh4.survivalmysterychests.SMC;
 import be.pyrrh4.survivalmysterychests.misc.InventoryData;
 
@@ -16,7 +17,7 @@ public class RollManager
 		final Inventory inv = inventoryData.getInventory();
 		final Player player = inventoryData.getPlayer();
 		final String id = inventoryData.getId();
-		final Inventory inventory = Bukkit.createInventory(player, inv.getSize(), SMC.instance().getLocale().getMessage("inventory-rolling").getLines().get(0));
+		final Inventory inventory = Bukkit.createInventory(player, inv.getSize(), Locale.GUI_SURVIVALMYSTERYCHESTS_ROLLINGNAME.getActive().getLine());
 
 		// On actualise l'inventaire
 
@@ -80,7 +81,7 @@ public class RollManager
 	{
 		Player player = inventoryData.getPlayer();
 		Inventory inv = inventoryData.getInventory();
-		Inventory inventory = Bukkit.createInventory(player, inv.getSize(), SMC.instance().getLocale().getMessage("inventory-finished").getLines().get(0));
+		Inventory inventory = Bukkit.createInventory(player, inv.getSize(), Locale.GUI_SURVIVALMYSTERYCHESTS_FINISHEDNAME.getActive().getLine());
 
 		// On actualise l'inventaire
 

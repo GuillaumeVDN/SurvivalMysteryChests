@@ -1,12 +1,12 @@
 package be.pyrrh4.survivalmysterychests.managers;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 
+import be.pyrrh4.core.material.Mat;
 import be.pyrrh4.core.storage.YMLConfiguration;
 import be.pyrrh4.core.util.Utils;
 import be.pyrrh4.survivalmysterychests.SMC;
@@ -18,7 +18,7 @@ public class CommandsManager
 		ArrayList<String> commands = getCommands(item, chestId);
 
 		for (String command : commands) {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("$PLAYER", player.getName()));
+			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("{player}", player.getName()));
 		}
 	}
 
@@ -33,7 +33,7 @@ public class CommandsManager
 		{
 			String brut = config.getString("chests." + chestId + ".wins." + key + ".item");
 
-			Material type = Material.getMaterial(brut.split(" ")[0]);
+			Mat type = Mat.from(brut, 0);
 			String name = config.getString("chests." + chestId + ".wins." + key + ".name");
 			ArrayList<String> lore = config.getList("chests." + chestId + ".wins." + key + ".lore");
 
@@ -45,7 +45,7 @@ public class CommandsManager
 				lore = Utils.format(lore);
 			}
 
-			if (item.getType().equals(type)
+			if (type.isMat(item)
 					&& (item.getItemMeta().hasDisplayName() && name != null  ? item.getItemMeta().getDisplayName().equals(name) : true)
 					&& (item.getItemMeta().hasLore() && lore != null ? item.getItemMeta().getLore().equals(lore) : true))
 			{
